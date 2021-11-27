@@ -1,6 +1,7 @@
 package com.example.mybooks;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -31,7 +32,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
-    private final String saveFilename = "memo.txt";
     public List<BookModel> array;
 
 
@@ -40,43 +40,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        binding.button1.setOnClickListener(v -> save());
-        binding.button2.setOnClickListener(v -> load());
 
+        String booksJson = null;
         try {
-            String booksJson = readFromAssets("books.json");
-            Gson gson = new Gson();
-            array = gson.fromJson(booksJson, new TypeToken<List<BookModel>>() {}.getType());
-
-
-            String text = "제목: " + bookItem.getString("title") + ", 가격: " + bookItem.getInt("price") + "\n" + "책 이미지 URL: " + bookItem.getString("image");
-            binding.text.setText(text);
-
-            Glide.with(this)
-                    .load(item.getImage())
-                    .into(binding.imageBook);
-
-            String description = bookItem.getString("description");
-            binding.textDescription.setText(Html.fromHtml(description));
+            booksJson = readFromAssets("books.json");
         } catch (IOException e) {
-            Log.i("DEBUG", "파일읽기실패");
-        } catch (JSONException e) {
-            Log.i("DEBUG", "JSON파일에러");
+            e.printStackTrace();
         }
 
-    }
+        Gson gson = new Gson();
+        array = gson.fromJson(booksJson, new TypeToken<List<BookModel>>() {}.getType());
+        BookAdapter bookAdapter = new BookAdapter(array);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        binding.recyclerView.setAdapter(bookAdapter);
 
-    public void save() {
-        String contents = binding.editText.getText().toString();
-        FileUtils.writeFile(this, saveFilename, contents);
-    }
-
-    public void load() {
-        try {
-            String loadedContents = FileUtils.readFile(this, saveFilename);
-            binding.editText.setText(loadedContents);
-        } catch (FileNotFoundException e) {
-        }
     }
 
     public String readFromAssets(String name) throws IOException {

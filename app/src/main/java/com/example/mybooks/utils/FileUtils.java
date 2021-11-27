@@ -28,7 +28,7 @@ public class FileUtils {
         InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
 
         StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStreamReader))) {
+        try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
             String line = reader.readLine();
             while (line != null) {
                 stringBuilder.append(line).append('\n');
@@ -39,4 +39,5 @@ public class FileUtils {
         }
         return stringBuilder.toString().trim();
     }
+
 }
