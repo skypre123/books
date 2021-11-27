@@ -32,7 +32,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         holder.binding.textAuthor.setText(Html.fromHtml(value.getAuthor()));
         holder.binding.textDescription.setText(Html.fromHtml(value.getDescription()));
 
-        Glide.with(this)
+        Glide.with(holder.itemView)
                 .load(value.getImage())
                 .into(holder.binding.image);
 
